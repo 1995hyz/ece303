@@ -21,6 +21,21 @@ class Sender(object):
 
     def send(self, data):
         raise NotImplementedError("The base API class has no implementation. Please override and add your own.")
+    def checkSum(self,data):        #this function converts data into a bytearray, and does a XOR sum on each elements of the byte-array. Return the invert of the XOR sum
+        byteData=bytearray(data)
+        xorSum=bytes(0)
+        for i in xrange(len(byteData)):
+            xorSum^=byteData[i]
+        return ~xorSum
+    def checkCheckSum(self,data,ReceivedCS):        #this function calulates the checkSum of the RECEIVED data  
+        byteData=bytearray(data)
+        xorSum=bytes(ReceivedCS)        #ReceivedCS should be an "one byte" object, the same type as xorSum in checkSum function     
+        for i in xrange(len(byteData)):
+            xorSum^=byteData[i]
+        if xorSum==225:         #if xorSum is 11111111, the data is not corrupted
+            return True
+        else:
+            return False
 
 
 class BogoSender(Sender):
