@@ -82,9 +82,11 @@ class Segment(object):
     @staticmethod
     def checkSum(self,data):        #this function converts data into a bytearray, and does a XOR sum on each elements of the byte-array. Return the invert of the XOR sum
         byteData=bytearray(data)
-        xorSum=bytes(0)
+        xorSum=bytearray(bytes(0))
+        print type(xorSum)
+        print type(byteData)
         for i in xrange(len(byteData)):
-            xorSum^=byteData[i]
+            xorSum=bytearray(byteData[i])^xorSum
         return ~xorSum
         
 class BogoSender(Sender):
