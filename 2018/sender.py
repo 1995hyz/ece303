@@ -30,25 +30,29 @@ class Sender(object):
         self.logger.info("Sending on port: {} and waiting for ACK on port: {}".format(self.outbound_port, self.inbound_port))      
 
         while True:
-            for seg in splitter(TEST_DATA)
+            for seg in self.splitter(self.TEST_DATA,self.MSS,self.PCKG):
                 try:
-                    checksum = Segment.checksum(seg)
-                    seqnum = Segment.seqnum(seqnum,seg)
-                    acknum = Segment.acknum(isSender=1)
-                    segment = Segment(checksum,seqnum,acknum,seg)
-                    self.simulator.put_to_socket((segment)  # send data
+                    seqnum = Segment.seqnum(self,self.seqnum,seg)
+                    print seqnum
+                    acknum = Segment.acknum(self,1)
+                    print acknum
+                    checksum = Segment.checkSum(self,seg)
+                    segment = Segment(self,checksum,seqnum,acknum,seg)
+                    self.simulator.put_to_socket(segment)  # send data
+                except socket.timeout:
+                    pass
 
-    def checkCheckSum(self,data,ReceivedCS):        #this function calulates the checkSum of the RECEIVED data  
-        byteData=bytearray(data)
-        xorSum=bytes(ReceivedCS)        #ReceivedCS should be an "one byte" object, the same type as xorSum in checkSum function     
-        for i in xrange(len(byteData)):
-            xorSum^=byteData[i]
-        if xorSum==225:         #if xorSum is 11111111, the data is not corrupted
-            return True
-        else:
-            return False
+#    def checkCheckSum(self,data,ReceivedCS):        #this function calulates the checkSum of the RECEIVED data  
+ #       byteData=bytearray(data)
+  #      xorSum=bytes(ReceivedCS)        #ReceivedCS should be an "one byte" object, the same type as xorSum in checkSum function     
+   #     for i in xrange(len(byteData)):
+    #        xorSum^=byteData[i]
+     #   if xorSum==225:         #if xorSum is 11111111, the data is not corrupted
+      #      return True
+       # else:
+        #    return False
 
-    def splitter(data, MSS)
+    def splitter(self, data, MSS, PCKG):
         j = 0
         k = MSS
         PCKG = PCKG + 1
@@ -58,28 +62,30 @@ class Sender(object):
         
 
 class Segment(object):
-    def __init__(self,checksum,seqnum,acknum,data,isSender)
+    def __init__(self,checksum,seqnum,acknum,data,isSender):
         checksum = self.checksum
         seqnum = self.seqnum
         acknum = self.acknum
         data = self.data
-        isSender = self.isSender
 
+    @staticmethod
+    def seqnum(self,lastseqnum,data):
+        return (lastseqnum + len(data))%255
+
+    @staticmethod
+    def acknum(self,isSender):
+        if isSender:
+            return -1
+        else:
+            return self.seqnum + MSS    
+
+    @staticmethod
     def checkSum(self,data):        #this function converts data into a bytearray, and does a XOR sum on each elements of the byte-array. Return the invert of the XOR sum
         byteData=bytearray(data)
         xorSum=bytes(0)
         for i in xrange(len(byteData)):
             xorSum^=byteData[i]
         return ~xorSum
-
-    def seqnum(self,lastseqnum,data)
-        return (lastseqnum + len(data))%255
-
-    def acknum(self,isSender)
-        if self.isSender:
-            return -1
-        else:
-            return self.seqnum + MSS
         
 class BogoSender(Sender):
     TEST_DATA = bytearray([68, 65, 84, 65])  # some bytes representing ASCII characters: 'D', 'A', 'T', 'A'
@@ -102,5 +108,5 @@ class BogoSender(Sender):
 
 if __name__ == "__main__":
     # test out BogoSender
-    sndr = BogoSender()
-    sndr.send(BogoSender.TEST_DATA)
+    sndr = Sender()
+    sndr.send(Sender.TEST_DATA)
