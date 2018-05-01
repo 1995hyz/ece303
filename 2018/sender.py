@@ -42,7 +42,7 @@ class Sender(object):
                 except socket.timeout:
                     pass
 
-#    def checkCheckSum(self,data,ReceivedCS):        #this function calulates the checkSum of the RECEIVED data  
+#       def checkCheckSum(self,data,ReceivedCS):        #this function calulates the checkSum of the RECEIVED data  
  #       byteData=bytearray(data)
   #      xorSum=bytes(ReceivedCS)        #ReceivedCS should be an "one byte" object, the same type as xorSum in checkSum function     
    #     for i in xrange(len(byteData)):
