@@ -32,13 +32,14 @@ class Sender(object):
         while True:
             for seg in self.splitter(self.TEST_DATA,self.MSS,self.PCKG):
                 try:
-                    seqnum = Segment.seqnum(self,self.seqnum,seg)
-                    print seqnum
-                    acknum = Segment.acknum(self,1)
-                    print acknum
-                    checksum = Segment.checkSum(self,seg)
-                    segment = Segment(self,checksum,seqnum,acknum,seg)
-                    self.simulator.put_to_socket(segment)  # send data
+                    segment = Segment(checksum=0,seqnum=0,acknum=0,data=seg)
+                    segment.seqnum = Segment.seqnum(self,self.seqnum,seg)
+                    print segment.seqnum
+                    segment.acknum = Segment.acknum(self,1)
+                    print segment.acknum
+                    segment.checksum = Segment.checkSum(self,seg)
+                    print segment.checksum
+                    self.simulator.put_to_socket(segment.read())  #     send data
                 except socket.timeout:
                     pass
 
@@ -60,33 +61,30 @@ class Sender(object):
         j = j+MSS
         k = k+MSS
         
-
+    
 class Segment(object):
-    def __init__(self,checksum,seqnum,acknum,data,isSender):
-        checksum = self.checksum
-        seqnum = self.seqnum
-        acknum = self.acknum
-        data = self.data
+    def __init__(self,checksum=0,seqnum=0,acknum=0,data=[]):
+        self.checksum = checksum
+        self.seqnum = seqnum
+        self.acknum = acknum
+        self.data = data
 
     @staticmethod
     def seqnum(self,lastseqnum,data):
         return (lastseqnum + len(data))%255
-
+    
     @staticmethod
     def acknum(self,isSender):
         if isSender:
             return -1
         else:
             return self.seqnum + MSS    
-
     @staticmethod
     def checkSum(self,data):        #this function converts data into a bytearray, and does a XOR sum on each elements of the byte-array. Return the invert of the XOR sum
         byteData=bytearray(data)
         xorSum=bytearray(bytes(0))
-        print type(xorSum)
-        print type(byteData)
         for i in xrange(len(byteData)):
-            xorSum=bytearray(byteData[i])^xorSum
+            xorSum=byteData[i]^int(xorSum)
         return ~xorSum
         
 class BogoSender(Sender):
