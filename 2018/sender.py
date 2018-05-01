@@ -15,8 +15,11 @@ class Sender(object):
     MSS = len(TEST_DATA)/SEG
     PCKG = 0
     seqnum = random.randint(0, 255)
+    j = 0
+    k = MSS
 
     def __init__(self, inbound_port=50006, outbound_port=50005, timeout=10, debug_level=logging.INFO):
+
         self.logger = utils.Logger(self.__class__.__name__, debug_level)
 
         self.inbound_port = inbound_port
@@ -29,19 +32,17 @@ class Sender(object):
     def send(self, data):
         self.logger.info("Sending on port: {} and waiting for ACK on port: {}".format(self.outbound_port, self.inbound_port))      
 
-        while True:
-            for seg in self.splitter(self.TEST_DATA,self.MSS,self.PCKG):
-                try:
-                    segment = Segment(checksum=0,seqnum=0,acknum=0,data=seg)
-                    segment.seqnum = Segment.seqnum(self,self.seqnum,seg)
-                    print segment.seqnum
-                    segment.acknum = Segment.acknum(self,1)
-                    print segment.acknum
-                    segment.checksum = Segment.checkSum(self,seg)
-                    print segment.checksum
-                    self.simulator.put_to_socket(segment.read())  #     send data
-                except socket.timeout:
-                    pass
+        for seg in self.splitter(self.TEST_DATA,self.MSS,self.PCKG):
+            try:
+                segment = Segment(checksum=0,seqnum=0,acknum=0,data=seg)
+                segment.seqnum = Segment.seqnum(self,self.seqnum,seg)
+                self.seqnum=segment.seqnum
+                segment.acknum = Segment.acknum(self,1)
+                segment.checksum = Segment.checkSum(self,seg)
+                print(segment)
+                    #self.simulator.put_to_socket(segment.read())  #     send data
+            except socket.timeout:
+                pass
 
 #       def checkCheckSum(self,data,ReceivedCS):        #this function calulates the checkSum of the RECEIVED data  
  #       byteData=bytearray(data)
@@ -54,13 +55,12 @@ class Sender(object):
         #    return False
 
     def splitter(self, data, MSS, PCKG):
-        j = 0
-        k = MSS
-        PCKG = PCKG + 1
-        yield data[j:k]
-        j = j+MSS
-        k = k+MSS
-        
+
+        for i in range(self.SEG):
+            PCKG = PCKG + 1
+            yield data[self.j:self.k]
+            self.j = self.j+1
+            self.k = self.k+MSS        
     
 class Segment(object):
     def __init__(self,checksum=0,seqnum=0,acknum=0,data=[]):
@@ -82,11 +82,14 @@ class Segment(object):
     @staticmethod
     def checkSum(self,data):        #this function converts data into a bytearray, and does a XOR sum on each elements of the byte-array. Return the invert of the XOR sum
         byteData=bytearray(data)
-        xorSum=bytearray(bytes(0))
+        xorSum=0
         for i in xrange(len(byteData)):
-            xorSum=byteData[i]^int(xorSum)
+            xorSum=byteData[i]^xorSum
         return ~xorSum
         
+    def __str__(self):
+        return str(self.__class__) + ": " + str(self.__dict__)
+
 class BogoSender(Sender):
     TEST_DATA = bytearray([68, 65, 84, 65])  # some bytes representing ASCII characters: 'D', 'A', 'T', 'A'
 
