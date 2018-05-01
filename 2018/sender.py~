@@ -5,14 +5,9 @@ import socket
 
 import channelsimulator
 import utils
-import random
 
 
 class Sender(object):
-    TEST_DATA = bytearray([68, 65, 84, 65])  # some bytes representing ASCII characters: 'D', 'A', 'T', 'A'
-    SEG = 4
-    MSS = len(TEST_DATA)/SEG
-    InitialSeqNumber = random.getrandbits(32)
 
     def __init__(self, inbound_port=50006, outbound_port=50005, timeout=10, debug_level=logging.INFO):
         self.logger = utils.Logger(self.__class__.__name__, debug_level)
@@ -25,30 +20,7 @@ class Sender(object):
         self.simulator.rcvr_setup(timeout)
 
     def send(self, data):
-        self.logger.info("Sending on port: {} and waiting for ACK on port: {}".format(self.outbound_port, self.inbound_port))      
-
-        while True:
-            for seg in segmentor(TEST_DATA)
-                try:
-                    Segment.CreateSeg(seg, NextSeqNum)
-                    self.simulator.put_to_socket(data)  # send data
-    def segmentor(data, MSS)
-        j = 0
-        k = MSS
-        yield data[i:i]
-        i = i+MSS
-        k = k+MSS
-        
-
-class Segment():
-    def __init__(self)
-
-    def CreateSeg(seg, seqnum)
-        
-        
-
-
-        #raise NotImplementedError("The base API class has no implementation. Please override and add your own.")
+        raise NotImplementedError("The base API class has no implementation. Please override and add your own.")
 
 
 class BogoSender(Sender):
