@@ -48,16 +48,15 @@ class Sender(object):
                 self.simulator.put_to_socket(byteArray)       #send data
             except socket.timeout:
                 pass
-
-#       def checkCheckSum(self,data,ReceivedCS):        #this function calulates the checkSum of the RECEIVED data  
- #       byteData=bytearray(data)
-  #      xorSum=bytes(ReceivedCS)        #ReceivedCS should be an "one byte" object, the same type as xorSum in checkSum function     
-   #     for i in xrange(len(byteData)):
-    #        xorSum^=byteData[i]
-     #   if xorSum==225:         #if xorSum is 11111111, the data is not corrupted
-      #      return True
-       # else:
-        #    return False
+    #@staticmethod
+    def checkCheckSum(self,data):        #this function calulates the checkSum of the RECEIVED data  
+        xorSum=~data[0]         #checkSum is at data[0]
+        for i in xrange(1,len(data)):
+            xorSum^=data[i]
+        if xorSum==-1:         #if xorSum is 11111111, the data is not corrupted
+            return True
+        else:
+            return False
 
     def splitter(self, data, MSS, PCKG):
 

@@ -48,7 +48,7 @@ class Segment(object):
 
     #@staticmethod
     def checkCheckSum(self,data):        #this function calulates the checkSum of the RECEIVED data  
-        xorSum=~data[0]        #ReceivedCS should be an "one byte" object, the same type as xorSum in checkSum function
+        xorSum=~data[0]        #checkSum is at data[0]
         for i in xrange(1,len(data)):
             xorSum^=data[i]
         if xorSum==-1:         #if xorSum is 11111111, the data is not corrupted
@@ -60,7 +60,7 @@ class Segment(object):
     def ack(self,data):
         isGood = self.checkCheckSum(data)
         if isGood:
-            self.acknum=(data[2]+len(data[3:])+1)%256
+            self.acknum=(data[2]+len(data[3:]))%256
         else:
             pass
     
