@@ -7,13 +7,14 @@ import channelsimulator
 import utils
 import random
 import binascii
+import math
 
 
 class Sender(object):
-    TEST_DATA = bytearray([68, 65, 84, 65])  # some bytes representing ASCII characters: 'D', 'A', 'T', 'A'
-    BUFF = 256
-    SEG = 4
-    MSS = len(TEST_DATA)/SEG
+    TEST_DATA = bytearray([68, 65, 84, 65, 80, 79, 79, 80, 81, 82])  # some bytes representing ASCII characters: 'D', 'A', 'T', 'A'
+    BUFF = 256 
+    MSS = 4
+    SEG = int(math.ceil(len(TEST_DATA)/float(MSS)))
     PCKG = 0
     seqnum = random.randint(0, 255)
     j = 0
@@ -41,7 +42,10 @@ class Sender(object):
                 segment.acknum = Segment.acknum(self,1)
                 segment.checksum = Segment.checkSum(self,seg)
                 print(segment)
-                #self.simulator.put_to_socket()       send data
+                byteArray = bytearray([segment.checksum, segment.acknum, segment.seqnum])
+                print seg
+                byteArray += seg
+                self.simulator.put_to_socket(byteArray)       #send data
             except socket.timeout:
                 pass
 
@@ -60,7 +64,7 @@ class Sender(object):
         for i in range(self.SEG):
             PCKG = PCKG + 1
             yield data[self.j:self.k]
-            self.j = self.j+1
+            self.j = self.j+MSS
             self.k = self.k+MSS        
     
 class Segment(object):
@@ -89,7 +93,7 @@ class Segment(object):
         xorSum=0
         for i in xrange(len(byteData)):
             xorSum=byteData[i]^xorSum
-        return ~xorSum
+        return xorSum
         
     def __str__(self):
         return str(self.__class__) + ": " + str(self.__dict__)
