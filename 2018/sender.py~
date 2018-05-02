@@ -37,7 +37,7 @@ class Sender(object):
         for seg in self.splitter(self.TEST_DATA,self.MSS,self.PCKG):
             try:
                 segment = Segment(checksum=0,seqnum=0,acknum=0,data=seg)
-                segment.seqnum = Segment.seqnum(self,self.seqnum,seg,self.MSS)
+                segment.seqnum = Segment.seqnum(self,self.seqnum,seg)
                 self.seqnum=segment.seqnum
                 segment.acknum = Segment.acknum(self,1)
                 byteArray = bytearray([segment.checksum, segment.acknum, segment.seqnum])
@@ -45,7 +45,7 @@ class Sender(object):
                 segment.checksum = Segment.checkSum(self,byteArray)
                 byteArray[0]=segment.checksum       #update checksum to new calculated value
                 print (segment)
-                self.simulator.u_send(byteArray)       #send data
+                self.simulator.put_to_socket(byteArray)       #send data
             except socket.timeout:
                 pass
     #@staticmethod
@@ -77,8 +77,8 @@ class Segment(object):
         print bytearray(self.seqnum) #bytearray(self.acknum) + bytearray(self.acknum) + bytearray(self.checksum) 
 
     @staticmethod
-    def seqnum(self,lastseqnum,data,MSS):
-        return (lastseqnum + MSS)%256
+    def seqnum(self,lastseqnum,data):
+        return (lastseqnum + len(data))%255
     
     @staticmethod
     def acknum(self,isSender):

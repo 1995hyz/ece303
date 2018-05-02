@@ -8,7 +8,6 @@ import utils
 
 class Receiver(object):
     RE_DATA=bytearray()
-    lastacknum = 0
 
     def __init__(self, inbound_port=50005, outbound_port=50006, timeout=10, debug_level=logging.INFO):
         self.logger = utils.Logger(self.__class__.__name__, debug_level)
@@ -21,15 +20,13 @@ class Receiver(object):
         self.simulator.sndr_setup(timeout)
 
     def receive(self):
-        while True:
-            self.RE_DATA=self.simulator.u_receive()
-            self.send();
+        self.RE_DATA=self.simulator.u_receive()
+        self.send();
 
 
     def send(self):
         ackPackage=Segment()
-        ackPackage.ack(self.RE_DATA,self.lastacknum)
-        self.lastacknum=ackPackage.acknum
+        ackPackage.ack(self.RE_DATA)
         ackPackage.checksum=ackPackage.checkSum()
         print ackPackage.checksum
         print ackPackage.acknum
@@ -60,13 +57,12 @@ class Segment(object):
             return False
     
     #@staticmethod
-    def ack(self,data,lastacknum):
+    def ack(self,data):
         isGood = self.checkCheckSum(data)
         if isGood:
             self.acknum=(data[2]+len(data[3:]))%256
         else:
-            print("corrupted")
-            self.acknum=lastacknum
+            pass
     
     def __str__(self):
         return str(self.__class__) + ": " + str(self.__dict__)
