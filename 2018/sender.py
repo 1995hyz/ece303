@@ -40,11 +40,11 @@ class Sender(object):
                 segment.seqnum = Segment.seqnum(self,self.seqnum,seg)
                 self.seqnum=segment.seqnum
                 segment.acknum = Segment.acknum(self,1)
-                segment.checksum = Segment.checkSum(self,seg)
-                print(segment)
                 byteArray = bytearray([segment.checksum, segment.acknum, segment.seqnum])
-                print seg
                 byteArray += seg
+                segment.checksum = Segment.checkSum(self,byteArray)
+                byteArray[0]=segment.checksum       #update checksum to new calculated value
+                print (segment)
                 self.simulator.put_to_socket(byteArray)       #send data
             except socket.timeout:
                 pass
@@ -90,9 +90,14 @@ class Segment(object):
     @staticmethod
     def checkSum(self,data):        #this function converts data into a bytearray, and does a XOR sum on each elements of the byte-array. Return the invert of the XOR sum
         byteData=bytearray(data)
+        print "Lenth of data is "
+        print len(byteData)
         xorSum=0
         for i in xrange(len(byteData)):
+            print "byte value: "
+            print bin(byteData[i])
             xorSum=byteData[i]^xorSum
+            print bin(xorSum)
         return xorSum
         
     def __str__(self):

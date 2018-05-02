@@ -39,10 +39,6 @@ class Segment(object):
         self.seqnum = seqnum
         self.acknum = acknum
         self.data = data
-
-    @staticmethod
-    def seqnum(self,lastseqnum,data):
-        return (lastseqnum + len(data))%255
          
     def checkSum(self):        #Since the segament of receiver only has ACK number in it, the checkSum value will just be the ACK number
         return self.acknum
@@ -53,11 +49,9 @@ class Segment(object):
     #@staticmethod
     def checkCheckSum(self,data):        #this function calulates the checkSum of the RECEIVED data  
         xorSum=~data[0]        #ReceivedCS should be an "one byte" object, the same type as xorSum in checkSum function
-        for i in xrange(len(data)):
+        for i in xrange(1,len(data)):
             xorSum^=data[i]
-            print data[i]
-            print xorSum
-        if xorSum==-127:         #if xorSum is 11111111, the data is not corrupted
+        if xorSum==-1:         #if xorSum is 11111111, the data is not corrupted
             return True
         else:
             return False
@@ -66,7 +60,9 @@ class Segment(object):
     def ack(self,data):
         isGood = self.checkCheckSum(data)
         if isGood:
-            self.acknum=(seqnum+len(data[3:]))%255
+            print data[2]
+            print len(data[3:])
+            self.acknum=(data[2]+len(data[3:])+1)%256
         else:
             pass
     
