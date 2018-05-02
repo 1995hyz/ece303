@@ -60,8 +60,6 @@ class Segment(object):
     def ack(self,data):
         isGood = self.checkCheckSum(data)
         if isGood:
-            print data[2]
-            print len(data[3:])
             self.acknum=(data[2]+len(data[3:])+1)%256
         else:
             pass

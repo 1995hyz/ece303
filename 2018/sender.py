@@ -90,14 +90,9 @@ class Segment(object):
     @staticmethod
     def checkSum(self,data):        #this function converts data into a bytearray, and does a XOR sum on each elements of the byte-array. Return the invert of the XOR sum
         byteData=bytearray(data)
-        print "Lenth of data is "
-        print len(byteData)
         xorSum=0
         for i in xrange(len(byteData)):
-            print "byte value: "
-            print bin(byteData[i])
             xorSum=byteData[i]^xorSum
-            print bin(xorSum)
         return xorSum
         
     def __str__(self):
