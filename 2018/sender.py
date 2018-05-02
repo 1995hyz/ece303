@@ -6,6 +6,7 @@ import socket
 import channelsimulator
 import utils
 import random
+import binascii
 
 
 class Sender(object):
@@ -40,7 +41,7 @@ class Sender(object):
                 segment.acknum = Segment.acknum(self,1)
                 segment.checksum = Segment.checkSum(self,seg)
                 print(segment)
-                    #self.simulator.put_to_socket(segment.read())  #     send data
+                #self.simulator.put_to_socket()       send data
             except socket.timeout:
                 pass
 
@@ -69,6 +70,9 @@ class Segment(object):
         self.acknum = acknum
         self.data = data
 
+    def toArray(self):
+        print bytearray(self.seqnum) #bytearray(self.acknum) + bytearray(self.acknum) + bytearray(self.checksum) 
+
     @staticmethod
     def seqnum(self,lastseqnum,data):
         return (lastseqnum + len(data))%255
@@ -76,7 +80,7 @@ class Segment(object):
     @staticmethod
     def acknum(self,isSender):
         if isSender:
-            return -1
+            return 0
         else:
             return self.seqnum + MSS    
     @staticmethod
