@@ -17,8 +17,14 @@ class Sender(object):
     SEG = int(math.ceil(len(TEST_DATA)/float(MSS)))
     PCKG = 0
     seqnum = random.randint(0, 255)
+    while seqnum == (BUFF-MSS):
+        seqnum = random.randint(0,255)
     j = 0
     k = MSS
+
+    buffer = bytearray(BUFF) # circular array - max size 256
+    buffer_start = seqnum # start index of buffer
+    buffer_end = seqnum # end index of buffer
 
     def __init__(self, inbound_port=50006, outbound_port=50005, timeout=10, debug_level=logging.INFO):
 
@@ -46,8 +52,28 @@ class Sender(object):
                 byteArray[0]=segment.checksum       #update checksum to new calculated value
                 print (segment)
                 self.simulator.u_send(byteArray)       #send data
+
+                # Handle acks
+                while True:
+                    # we receive: ([ackPackage.checksum,ackPackage.acknum])
+                    receivedByteArray = self.simulator.u_receive()
+                    print("Acknum: {}".format(receivedByteArray[1]))
+
+                    if self.checkCheckSum(receivedByteArray): # ack not corrupted
+                        if receivedByteArray[1] != self.seqnum: # no error
+                            break
+                        else: # error
+                            print("Dupack - resending")
+                            self.simulator.u_send(byteArray) # resend data 
+                    else:
+                        print("Corrupted ack checksum - resending")
+                        self.simulator.u_send(byteArray) # resend data 
+
             except socket.timeout:
                 pass
+
+            
+
     #@staticmethod
     def checkCheckSum(self,data):        #this function calulates the checkSum of the RECEIVED data  
         xorSum=~data[0]         #checkSum is at data[0]
@@ -64,7 +90,19 @@ class Sender(object):
             PCKG = PCKG + 1
             yield data[self.j:self.k]
             self.j = self.j+MSS
-            self.k = self.k+MSS        
+            self.k = self.k+MSS  
+
+    def _fillBuffer(self,data):
+        for byte in data:
+            self.buffer[self.buffer_start] = byte
+            self.buffer_end += 1
+            self.buffer_end %= 256
+
+    # returns empty spots in buffer
+    def _bufferNumOpenSpots(self):
+        return (buffer_end - buffer_start)%BUFF
+
+
     
 class Segment(object):
     def __init__(self,checksum=0,seqnum=0,acknum=0,data=[]):

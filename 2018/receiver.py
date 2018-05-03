@@ -31,7 +31,6 @@ class Receiver(object):
         ackPackage.ack(self.RE_DATA,self.lastacknum)
         self.lastacknum=ackPackage.acknum
         ackPackage.checksum=ackPackage.checkSum()
-        print ackPackage.checksum
         print ackPackage.acknum
         byteArray=bytearray([ackPackage.checksum,ackPackage.acknum])
         self.simulator.u_send(byteArray)
@@ -64,6 +63,8 @@ class Segment(object):
         isGood = self.checkCheckSum(data)
         if isGood:
             self.acknum=(data[2]+len(data[3:]))%256
+            if self.acknum != lastacknum:
+                print("Payload: {}".format(data[3:]))
         else:
             print("corrupted")
             self.acknum=lastacknum
