@@ -45,10 +45,13 @@ class BogoSender(Sender):
                 pass
 
 class MySender(BogoSender):
-    TEST_DATA = "HELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAH END"
+    #TEST_DATA = "HELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAH END"
+    file_open=open("./Test_Input.txt",'rb')
+    TEST_DATA=file_open.read()
+    print(TEST_DATA)
     print(len(TEST_DATA))
     BUFF = 256 
-    MSS = 4
+    MSS = 64
     SEG = int(math.ceil(len(TEST_DATA)/float(MSS)))
     PCKG = 0
     seqnum = random.randint(0, 255)
@@ -58,6 +61,7 @@ class MySender(BogoSender):
     k = MSS
     dupCount = 0
     packageSent = False
+    resend=False
 
     buffer = bytearray(BUFF) # circular array - max size 256
     buffer_start = seqnum # start index of buffer
@@ -73,22 +77,23 @@ class MySender(BogoSender):
 
         for seg in self.splitter(self.TEST_DATA,self.MSS,self.PCKG):
             try:
-                segment = Segment(checksum=0,seqnum=0,acknum=0,data=seg)
-                segment.seqnum = Segment.seqnum(self,self.seqnum,seg,self.MSS)
-                self.seqnum=segment.seqnum
-                segment.acknum = Segment.acknum(self,1)
-                byteArray = bytearray([segment.checksum, segment.acknum, segment.seqnum])
-                byteArray += seg
-                segment.checksum = Segment.checkSum(self,byteArray)
-                byteArray[0]=segment.checksum       #update checksum to new calculated value
-                #print (segment)
-                self.simulator.u_send(byteArray)       #send data
+                if not self.resend:
+                    segment = Segment(checksum=0,seqnum=0,acknum=0,data=seg)
+                    segment.seqnum = Segment.seqnum(self,self.seqnum,seg,self.MSS)
+                    self.seqnum=segment.seqnum
+                    segment.acknum = Segment.acknum(self,1)
+                    byteArray = bytearray([segment.checksum, segment.acknum, segment.seqnum])
+                    byteArray += seg
+                    segment.checksum = Segment.checkSum(self,byteArray)
+                    byteArray[0]=segment.checksum       #update checksum to new calculated value
+                    #print (segment)
+                    self.simulator.u_send(byteArray)       #send data
 
                 # Handle acks
                 while True:
                     # we receive: ([ackPackage.checksum,ackPackage.acknum])
                     receivedByteArray = self.simulator.u_receive()
-                    #print("Acknum: {}".format(receivedByteArray[1]))
+                    print("Acknum: {}".format(receivedByteArray[1]))
 
                     if self.checkCheckSum(receivedByteArray): # ack not corrupted
                         if len(receivedByteArray) == 3 or receivedByteArray[1] == self.seqnum:
@@ -99,6 +104,7 @@ class MySender(BogoSender):
                             if self.timeout > 0.1:
                                 self.timeout -= 0.1
                             self.simulator.sndr_socket.settimeout(self.timeout)
+                            self.resend=False
                             break
                         else: # error
                             #print("First Packet not received - resending")
@@ -112,12 +118,23 @@ class MySender(BogoSender):
                             self.timeout*=2
                             self.simulator.sndr_socket.settimeout(self.timeout) 
                             self.dupCount = 0
-                            print self.timeout
-                            if self.timeout>5:
+                            #print self.timeout
+                            if self.timeout>10:
                                 print("Timeout has occurred!")
                                 exit()                                                            
             except socket.timeout:
-                pass
+                #print "waiting"
+                self.resend = True
+                self.simulator.u_send(byteArray)
+                self.dupCount += 1
+                if self.dupCount >= 3:
+                    self.dupCount = 0
+                    #print("Slowing down")
+                    self.timeout *= 2
+                    self.simulator.sndr_socket.settimeout(self.timeout)
+                    if self.timeout > 10:
+                        print("Timeout has occurred!")
+                        exit()
 
             
 

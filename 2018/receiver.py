@@ -5,6 +5,7 @@ import logging
 import channelsimulator
 import utils
 import socket
+import sys
 
 
 class Receiver(object):
@@ -53,9 +54,9 @@ class MyReceiver(BogoReceiver):
     def receive(self):
         while True:
             try:
-            # #print("Before u_receive")
+                #print("Before u_receive")
                 self.RE_DATA=self.simulator.u_receive()
-            # #print("After u_receive")
+                #print("After u_receive")
                 if self.timeout > 0.1:
                     self.timeout += -(0.1)
                     self.dupCount = 0
@@ -87,10 +88,6 @@ class MyReceiver(BogoReceiver):
         #print("lastacknum: {}".format(self.lastacknum))
         byteArray=bytearray([ackPackage.checksum,ackPackage.acknum])
         backup = byteArray
-        #if self.resend:
-        #    self.simulator.u_send(backup)
-        #    self.resend=False
-        #else:
         self.simulator.u_send(byteArray)
 
 class Segment(object):
@@ -122,11 +119,9 @@ class Segment(object):
         isGood = self.checkCheckSum(data)
         if isGood:
             self.acknum=(data[2]+len(data[3:]))%256
-            # if self.acknum > lastacknum or data[2]+len(data[3:]) >=256:
-                # #print("Payload: {}".format(data[3:]))
             #print("Rec seqnum: {}".format(data[2]))
             if data[2] == lastacknum or lastacknum == -1:
-                print("{}".format(data[3:]))
+                sys.stdout.write("{}".format(data[3:]))
                 return True
 
         else:
