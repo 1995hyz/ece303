@@ -5,10 +5,9 @@ import logging
 import channelsimulator
 import utils
 
-
 class Receiver(object):
     RE_DATA=bytearray()
-    lastacknum = 0
+    lastacknum = -1 # initialized to -1 to signify first packet
 
     def __init__(self, inbound_port=50005, outbound_port=50006, timeout=10, debug_level=logging.INFO):
         self.logger = utils.Logger(self.__class__.__name__, debug_level)
@@ -22,16 +21,22 @@ class Receiver(object):
 
     def receive(self):
         while True:
+            # print("Before u_receive")
             self.RE_DATA=self.simulator.u_receive()
+            # print("After u_receive")
             self.send();
 
 
     def send(self):
         ackPackage=Segment()
-        ackPackage.ack(self.RE_DATA,self.lastacknum)
-        self.lastacknum=ackPackage.acknum
-        ackPackage.checksum=ackPackage.checkSum()
-        print ackPackage.acknum
+        ack_success = ackPackage.ack(self.RE_DATA,self.lastacknum)
+        if ack_success:
+            self.lastacknum = ackPackage.acknum
+        if ackPackage.acknum < 0:
+            ackPackage.acknum = 0 # we set it to 0 here, it may be set back to -1
+        ackPackage.checksum = ackPackage.checkSum()
+        print("acknum: {}".format(ackPackage.acknum))
+        print("lastacknum: {}".format(self.lastacknum))
         byteArray=bytearray([ackPackage.checksum,ackPackage.acknum])
         self.simulator.u_send(byteArray)
 
@@ -63,11 +68,17 @@ class Segment(object):
         isGood = self.checkCheckSum(data)
         if isGood:
             self.acknum=(data[2]+len(data[3:]))%256
-            if self.acknum != lastacknum:
-                print("Payload: {}".format(data[3:]))
+            # if self.acknum > lastacknum or data[2]+len(data[3:]) >=256:
+                # print("Payload: {}".format(data[3:]))
+            print("Rec seqnum: {}".format(data[2]))
+            if data[2] == lastacknum or lastacknum == -1:
+                print("--------Payload: {}".format(data[3:]))
+                return True
+
         else:
             print("corrupted")
-            self.acknum=lastacknum
+
+        return False
     
     def __str__(self):
         return str(self.__class__) + ": " + str(self.__dict__)

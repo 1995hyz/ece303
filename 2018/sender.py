@@ -11,7 +11,8 @@ import math
 
 
 class Sender(object):
-    TEST_DATA = bytearray([68, 65, 84, 65, 80, 79, 79, 80, 81, 82])  # some bytes representing ASCII characters: 'D', 'A', 'T', 'A'
+    # TEST_DATA = bytearray([65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84])  # some bytes representing ASCII characters: 'D', 'A', 'T', 'A'
+    TEST_DATA = bytearray([i for i in range(65,85)])
     BUFF = 256 
     MSS = 4
     SEG = int(math.ceil(len(TEST_DATA)/float(MSS)))
@@ -60,7 +61,7 @@ class Sender(object):
                     print("Acknum: {}".format(receivedByteArray[1]))
 
                     if self.checkCheckSum(receivedByteArray): # ack not corrupted
-                        if receivedByteArray[1] != self.seqnum: # no error
+                        if receivedByteArray[1] == (self.seqnum + len(seg))%256: # no error
                             break
                         else: # error
                             print("Dupack - resending")
