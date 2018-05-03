@@ -5,9 +5,8 @@ import logging
 import channelsimulator
 import utils
 
+
 class Receiver(object):
-    RE_DATA=bytearray()
-    lastacknum = -1 # initialized to -1 to signify first packet
 
     def __init__(self, inbound_port=50005, outbound_port=50006, timeout=10, debug_level=logging.INFO):
         self.logger = utils.Logger(self.__class__.__name__, debug_level)
@@ -20,12 +19,36 @@ class Receiver(object):
         self.simulator.sndr_setup(timeout)
 
     def receive(self):
+        raise NotImplementedError("The base API class has no implementation. Please override and add your own.")
+
+
+class BogoReceiver(Receiver):
+    ACK_DATA = bytes(123)
+
+    def __init__(self):
+        super(BogoReceiver, self).__init__()
+
+    def receive(self):
+        self.logger.info("Receiving on port: {} and replying with ACK on port: {}".format(self.inbound_port, self.outbound_port))
+        while True:
+            data = self.simulator.get_from_socket()  # receive data
+            self.logger.info("Got data from socket: {}".format(
+                data.decode('ascii')))  # note that ASCII will only decode bytes in the range 0-127
+            self.simulator.put_to_socket(BogoReceiver.ACK_DATA)  # send ACK
+
+class MyReceiver(BogoReceiver):
+    RE_DATA=bytearray()
+    lastacknum = -1 # initialized to -1 to signify first packet
+
+    def __init__(self):
+        super(MyReceiver, self).__init__()
+
+    def receive(self):
         while True:
             # print("Before u_receive")
             self.RE_DATA=self.simulator.u_receive()
             # print("After u_receive")
             self.send();
-
 
     def send(self):
         ackPackage=Segment()
@@ -83,22 +106,8 @@ class Segment(object):
     def __str__(self):
         return str(self.__class__) + ": " + str(self.__dict__)
 
-class BogoReceiver(Receiver):
-    ACK_DATA = bytes(123)
-
-    def __init__(self):
-        super(BogoReceiver, self).__init__()
-
-    def receive(self):
-        self.logger.info("Receiving on port: {} and replying with ACK on port: {}".format(self.inbound_port, self.outbound_port))
-        while True:
-            data = self.simulator.get_from_socket()  # receive data
-            self.logger.info("Got data from socket: {}".format(
-                data.decode('ascii')))  # note that ASCII will only decode bytes in the range 0-127
-            self.simulator.put_to_socket(BogoReceiver.ACK_DATA)  # send ACK
 
 
 if __name__ == "__main__":
-    # test out BogoReceiver
-    rcvr = Receiver()
+    rcvr = MyReceiver()
     rcvr.receive()
