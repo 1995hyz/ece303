@@ -11,7 +11,40 @@ import math
 
 
 class Sender(object):
-    # TEST_DATA = bytearray([65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84])  # some bytes representing ASCII characters: 'D', 'A', 'T', 'A'
+
+    def __init__(self, inbound_port=50006, outbound_port=50005, timeout=10, debug_level=logging.INFO):
+        self.logger = utils.Logger(self.__class__.__name__, debug_level)
+
+        self.inbound_port = inbound_port
+        self.outbound_port = outbound_port
+        self.simulator = channelsimulator.ChannelSimulator(inbound_port=inbound_port, outbound_port=outbound_port,
+                                                           debug_level=debug_level)
+        self.simulator.sndr_setup(timeout)
+        self.simulator.rcvr_setup(timeout)
+
+    def send(self, data):
+        raise NotImplementedError("The base API class has no implementation. Please override and add your own.")
+
+
+class BogoSender(Sender):
+    TEST_DATA = bytearray([68, 65, 84, 65])  # some bytes representing ASCII characters: 'D', 'A', 'T', 'A'
+
+    def __init__(self):
+        super(BogoSender, self).__init__()
+
+    def send(self, data):
+        self.logger.info("Sending on port: {} and waiting for ACK on port: {}".format(self.outbound_port, self.inbound_port))
+        while True:
+            try:
+                self.simulator.put_to_socket(data)  # send data
+                ack = self.simulator.get_from_socket()  # receive ACK
+                self.logger.info("Got ACK from socket: {}".format(
+                    ack.decode('ascii')))  # note that ASCII will only decode bytes in the range 0-127
+                break
+            except socket.timeout:
+                pass
+
+class MySender(BogoSender):
     TEST_DATA = bytearray([i for i in range(65,85)])
     BUFF = 256 
     MSS = 4
@@ -27,16 +60,8 @@ class Sender(object):
     buffer_start = seqnum # start index of buffer
     buffer_end = seqnum # end index of buffer
 
-    def __init__(self, inbound_port=50006, outbound_port=50005, timeout=10, debug_level=logging.INFO):
-
-        self.logger = utils.Logger(self.__class__.__name__, debug_level)
-
-        self.inbound_port = inbound_port
-        self.outbound_port = outbound_port
-        self.simulator = channelsimulator.ChannelSimulator(inbound_port=inbound_port, outbound_port=outbound_port,
-                                                           debug_level=debug_level)
-        self.simulator.sndr_setup(timeout)
-        self.simulator.rcvr_setup(timeout)
+    def __init(self):
+        super(MySender, self).__init__()
 
     def send(self, data):
         self.logger.info("Sending on port: {} and waiting for ACK on port: {}".format(self.outbound_port, self.inbound_port))      
@@ -103,8 +128,6 @@ class Sender(object):
     def _bufferNumOpenSpots(self):
         return (buffer_end - buffer_start)%BUFF
 
-
-    
 class Segment(object):
     def __init__(self,checksum=0,seqnum=0,acknum=0,data=[]):
         self.checksum = checksum
@@ -136,26 +159,7 @@ class Segment(object):
     def __str__(self):
         return str(self.__class__) + ": " + str(self.__dict__)
 
-class BogoSender(Sender):
-    TEST_DATA = bytearray([68, 65, 84, 65])  # some bytes representing ASCII characters: 'D', 'A', 'T', 'A'
-
-    def __init__(self):
-        super(BogoSender, self).__init__()
-
-    def send(self, data):
-        self.logger.info("Sending on port: {} and waiting for ACK on port: {}".format(self.outbound_port, self.inbound_port))
-        while True:
-            try:
-                self.simulator.put_to_socket(data)  # send data
-                ack = self.simulator.get_from_socket()  # receive ACK
-                self.logger.info("Got ACK from socket: {}".format(
-                    ack.decode('ascii')))  # note that ASCII will only decode bytes in the range 0-127
-                break
-            except socket.timeout:
-                pass
-
 
 if __name__ == "__main__":
-    # test out BogoSender
-    sndr = Sender()
-    sndr.send(Sender.TEST_DATA)
+    sndr = MySender()
+    sndr.send(MySender.TEST_DATA)
