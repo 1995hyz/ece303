@@ -48,10 +48,8 @@ class MySender(BogoSender):
     #TEST_DATA = "HELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAHHELLO YINGZHI I AM ABDULLAH END"
     file_open=open("./Test_Input.txt",'rb')
     TEST_DATA=file_open.read()
-    print(TEST_DATA)
-    print(len(TEST_DATA))
     BUFF = 256 
-    MSS = 64
+    MSS = 250
     SEG = int(math.ceil(len(TEST_DATA)/float(MSS)))
     PCKG = 0
     seqnum = random.randint(0, 255)
@@ -86,14 +84,12 @@ class MySender(BogoSender):
                     byteArray += seg
                     segment.checksum = Segment.checkSum(self,byteArray)
                     byteArray[0]=segment.checksum       #update checksum to new calculated value
-                    #print (segment)
                     self.simulator.u_send(byteArray)       #send data
 
                 # Handle acks
                 while True:
                     # we receive: ([ackPackage.checksum,ackPackage.acknum])
                     receivedByteArray = self.simulator.u_receive()
-                    print("Acknum: {}".format(receivedByteArray[1]))
 
                     if self.checkCheckSum(receivedByteArray): # ack not corrupted
                         if len(receivedByteArray) == 3 or receivedByteArray[1] == self.seqnum:
@@ -107,29 +103,23 @@ class MySender(BogoSender):
                             self.resend=False
                             break
                         else: # error
-                            #print("First Packet not received - resending")
                             self.simulator.u_send(byteArray) # resend data 
                     else:
-                        #print("Corrupted ack checksum - resending")
                         self.simulator.u_send(byteArray) # resend data 
                         self.dupCount+=1
                         if self.dupCount == 3 and self.packageSent:
-                            #print("slowing down")
                             self.timeout*=2
                             self.simulator.sndr_socket.settimeout(self.timeout) 
                             self.dupCount = 0
-                            #print self.timeout
                             if self.timeout>10:
                                 print("Timeout has occurred!")
                                 exit()                                                            
             except socket.timeout:
-                #print "waiting"
                 self.resend = True
                 self.simulator.u_send(byteArray)
                 self.dupCount += 1
                 if self.dupCount >= 3:
                     self.dupCount = 0
-                    #print("Slowing down")
                     self.timeout *= 2
                     self.simulator.sndr_socket.settimeout(self.timeout)
                     if self.timeout > 10:

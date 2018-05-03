@@ -54,28 +54,22 @@ class MyReceiver(BogoReceiver):
     def receive(self):
         while True:
             try:
-                #print("Before u_receive")
                 self.RE_DATA=self.simulator.u_receive()
-                #print("After u_receive")
                 if self.timeout > 0.1:
                     self.timeout += -(0.1)
                     self.dupCount = 0
                 self.send()
             except socket.timeout:
-                #print "waiting"
                 self.resend = True
                 self.simulator.u_send(self.backup)
                 self.dupCount += 1
                 if self.dupCount >= 3:
                     self.dupCount = 0
-                    #print("Slowing down")
                     self.timeout *= 2
                     self.simulator.rcvr_socket.settimeout(self.timeout)
                     if self.timeout > 5:
-                        print("Timeout has occurred!")
                         exit()
                         
-
     def send(self):
         ackPackage=Segment()
         ack_success = ackPackage.ack(self.RE_DATA,self.lastacknum)
@@ -84,8 +78,6 @@ class MyReceiver(BogoReceiver):
         if ackPackage.acknum < 0:
             ackPackage.acknum = 0 # we set it to 0 here, it may be set back to -1
         ackPackage.checksum = ackPackage.checkSum()
-        #print("acknum: {}".format(ackPackage.acknum))
-        #print("lastacknum: {}".format(self.lastacknum))
         byteArray=bytearray([ackPackage.checksum,ackPackage.acknum])
         backup = byteArray
         self.simulator.u_send(byteArray)
@@ -119,14 +111,12 @@ class Segment(object):
         isGood = self.checkCheckSum(data)
         if isGood:
             self.acknum=(data[2]+len(data[3:]))%256
-            #print("Rec seqnum: {}".format(data[2]))
             if data[2] == lastacknum or lastacknum == -1:
                 sys.stdout.write("{}".format(data[3:]))
                 return True
 
         else:
             pass
-            #print("corrupted")
 
         return False
     
