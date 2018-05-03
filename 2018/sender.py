@@ -45,7 +45,7 @@ class BogoSender(Sender):
                 pass
 
 class MySender(BogoSender):
-    TEST_DATA = bytearray([i for i in range(65,85)])
+    TEST_DATA = bytearray([i for i in range(65,87)])
     BUFF = 256 
     MSS = 4
     SEG = int(math.ceil(len(TEST_DATA)/float(MSS)))
@@ -55,13 +55,16 @@ class MySender(BogoSender):
         seqnum = random.randint(0,255)
     j = 0
     k = MSS
+    dupCount = 0
 
     buffer = bytearray(BUFF) # circular array - max size 256
     buffer_start = seqnum # start index of buffer
     buffer_end = seqnum # end index of buffer
 
-    def __init(self):
+    def __init__(self, timeout=0.1):
         super(MySender, self).__init__()
+        self.timeout = timeout
+        self.simulator.sndr_socket.settimeout(self.timeout)
 
     def send(self, data):
         self.logger.info("Sending on port: {} and waiting for ACK on port: {}".format(self.outbound_port, self.inbound_port))      
@@ -86,15 +89,26 @@ class MySender(BogoSender):
                     print("Acknum: {}".format(receivedByteArray[1]))
 
                     if self.checkCheckSum(receivedByteArray): # ack not corrupted
-                        if receivedByteArray[1] == (self.seqnum + len(seg))%256: # no error
+                        if len(receivedByteArray) == 3 or receivedByteArray[1] == self.seqnum:
+                            self.simulator.u_send(byteArray)                            
+                        elif receivedByteArray[1] == (self.seqnum + len(seg))%256: # no error
+                            self.dupCount = 0
+                            if self.timeout > 0.1:
+                                self.timeout -= 0.1
+                            self.simulator.sndr_socket.settimeout(self.timeout)
                             break
                         else: # error
-                            print("Dupack - resending")
+                            print("First Packet not received - resending")
                             self.simulator.u_send(byteArray) # resend data 
                     else:
                         print("Corrupted ack checksum - resending")
                         self.simulator.u_send(byteArray) # resend data 
-
+                        self.dupCount+=1
+                        if self.dupCount == 3:
+                            print("slowing down")
+                            self.timeout*=2
+                            self.simulator.sndr_socket.settimeout(self.timeout) 
+                            self.dupCount = 0                            
             except socket.timeout:
                 pass
 

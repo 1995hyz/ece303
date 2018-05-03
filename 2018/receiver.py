@@ -4,6 +4,7 @@ import logging
 
 import channelsimulator
 import utils
+import socket
 
 
 class Receiver(object):
@@ -37,18 +38,38 @@ class BogoReceiver(Receiver):
             self.simulator.put_to_socket(BogoReceiver.ACK_DATA)  # send ACK
 
 class MyReceiver(BogoReceiver):
-    RE_DATA=bytearray()
+    RE_DATA=bytearray([0,0,0,0])
     lastacknum = -1 # initialized to -1 to signify first packet
+    backup = bytearray([0,0,0])
+    resend = True
+    dupCount = 0
 
-    def __init__(self):
+
+    def __init__(self, timeout = 0.1):
         super(MyReceiver, self).__init__()
+        self.timeout = timeout
+        self.simulator.rcvr_socket.settimeout(self.timeout)
 
     def receive(self):
         while True:
+            try:
             # print("Before u_receive")
-            self.RE_DATA=self.simulator.u_receive()
+                self.RE_DATA=self.simulator.u_receive()
             # print("After u_receive")
-            self.send();
+                if self.timeout > 0.1:
+                    self.timeout += -(0.1)
+                    self.dupCount = 0
+                self.send()
+            except socket.timeout:
+                print "waiting"
+                self.resend = True
+                self.simulator.u_send(self.backup)
+                self.dupCount += 1
+                if self.dupCount >= 3:
+                    self.dupCount = 0
+                    print("Slowing down")
+                    self.timeout *= 2
+                    self.simulator.rcvr_socket.settimeout(self.timeout)
 
     def send(self):
         ackPackage=Segment()
@@ -61,9 +82,15 @@ class MyReceiver(BogoReceiver):
         print("acknum: {}".format(ackPackage.acknum))
         print("lastacknum: {}".format(self.lastacknum))
         byteArray=bytearray([ackPackage.checksum,ackPackage.acknum])
+        backup = byteArray
+        #if self.resend:
+        #    self.simulator.u_send(backup)
+        #    self.resend=False
+        #else:
         self.simulator.u_send(byteArray)
 
 class Segment(object):
+
     def __init__(self,checksum=0,seqnum=0,acknum=0,data=[]):
         self.checksum = checksum
         self.seqnum = seqnum
@@ -111,3 +138,4 @@ class Segment(object):
 if __name__ == "__main__":
     rcvr = MyReceiver()
     rcvr.receive()
+
